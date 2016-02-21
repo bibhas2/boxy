@@ -52,6 +52,7 @@ angular.module("BoxyApp", [])
     started: false
   }
   this.selectedServer = undefined;
+  this.dialogMode = "ADD";
 
   this.isServerSelected = function(server) {
     return server === this.selectedServer;
@@ -66,6 +67,12 @@ angular.module("BoxyApp", [])
     return this.selectedServer !== undefined && this.selectedServer.started;
   }
   this.openNewServerDialog = function() {
+    this.dialogMode = "ADD";
+    this.editableServer.name = "";
+    this.editableServer.remoteHost = "";
+    this.editableServer.remotePort = "";
+    this.editableServer.localPort = "";
+
     document.getElementById("editableServerDialog").showModal();
   }
   this.closeNewServerDialog = function() {
@@ -83,6 +90,7 @@ angular.module("BoxyApp", [])
       started: this.editableServer.started
     }
     this.serverList.push(server);
+    this.selectedServer = server;
   };
 
   this.removeServer = function() {
@@ -100,5 +108,33 @@ angular.module("BoxyApp", [])
     this.serverList.splice(idx, 1);
 
     this.selectedServer = undefined;
+  }
+
+  this.openEditServerDialog = function() {
+    if (this.selectedServer === undefined) {
+      return;
+    }
+
+    this.dialogMode = "EDIT";
+
+    this.editableServer.name = this.selectedServer.name;
+    this.editableServer.remoteHost = this.selectedServer.remoteHost;
+    this.editableServer.remotePort = this.selectedServer.remotePort;
+    this.editableServer.localPort = this.selectedServer.localPort;
+
+    document.getElementById("editableServerDialog").showModal();
+  }
+
+  this.updateServerSettings = function() {
+    if (this.selectedServer === undefined) {
+      return;
+    }
+
+    this.selectedServer.name = this.editableServer.name;
+    this.selectedServer.remoteHost = this.editableServer.remoteHost;
+    this.selectedServer.remotePort = this.editableServer.remotePort;
+    this.selectedServer.localPort = this.editableServer.localPort;
+
+    document.getElementById("editableServerDialog").close();
   }
 });

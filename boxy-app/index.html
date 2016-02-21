@@ -89,7 +89,7 @@
 
     <dialog id="editableServerDialog">
         <header class="toolbar toolbar-header">
-            <h1 class="title">Add New Server</h1>
+            <h1 class="title">{{main.dialogMode == 'ADD' ? 'Add New Server' : 'Edit Settings'}}</h1>
         </header>
 
         <form style="padding: 10px">
@@ -113,7 +113,8 @@
 
         <footer class="toolbar toolbar-footer">
             <div class="toolbar-actions">
-                <button class="btn btn-primary pull-right" ng-click="main.addNewServer()" style="width:50pt">Add</button>
+                <button class="btn btn-primary pull-right" ng-click="main.addNewServer()" ng-if="main.dialogMode == 'ADD'" style="width:50pt">Add</button>
+                <button class="btn btn-primary pull-right" ng-click="main.updateServerSettings()" ng-if="main.dialogMode == 'EDIT'" style="width:50pt">Save</button>
                 <button class="btn btn-default pull-right" ng-click="main.closeNewServerDialog()" style="width:50pt">Cancel</button>
             </div>
         </footer>
