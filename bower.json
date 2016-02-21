@@ -1,0 +1,6 @@
+{
+  "name": "bower-test",
+  "dependencies": {
+    "angular": "^1.5.0"
+  }
+}

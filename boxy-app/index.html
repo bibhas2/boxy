@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Boxy</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/photon.min.css">
+    <script src="../bower_components/angular/angular.min.js"></script>
+    <script src="js/boxy.js" charset="utf-8"></script>
+    <style>
+    dialog {
+      padding: 0;
+      border: 1px solid #bebebe;
+      border-radius: 6px;
+      box-shadow: 0 0 30px rgba(0,0,0,.1);
+      overflow: hidden;
+      width:400px;
+      &::backdrop {
+          background: rgba(0,0,0,0.2);
+      }
+    }
+    </style>
+  </head>
+  <body ng-app="BoxyApp" ng-controller="MainController as main">
+    <div class="window">
+
+      <!-- .toolbar-header sits at the top of your app -->
+      <!-- <header class="toolbar toolbar-header">
+        <h1 class="title">Photon</h1>
+      </header> -->
+
+      <!-- Your app's content goes inside .window-content -->
+      <div class="window-content">
+        <div class="pane-group">
+          <div class="pane pane-sm sidebar">
+            <header class="toolbar toolbar-header">
+              <div class="toolbar-actions">
+                <div class="btn-group">
+                  <button class="btn btn-default" title="Add a new server" ng-click="main.openNewServerDialog()">
+                    <span class="icon icon-plus"></span>
+                  </button>
+                  <button class="btn btn-default" title="Remove the server" ng-if="main.selectedServer !== undefined" ng-click="main.removeServer()">
+                    <span class="icon icon-minus"></span>
+                  </button>
+                  <button class="btn btn-default" title="Edit the server settings" ng-if="main.selectedServer !== undefined" ng-click="main.openEditServerDialog()">
+                    <span class="icon icon-pencil"></span>
+                  </button>
+                  <button class="btn btn-default" title="Start the server" ng-if="main.startButtonEnabled()">
+                    <span class="icon icon-play" style="color: #34c84a"></span>
+                  </button>
+                  <button class="btn btn-default" title="Stop the server" ng-if="main.stopButtonEnabled()">
+                    <span class="icon icon-stop" style="color: #fc605b"></span>
+                  </button>
+                </div>
+              <div>
+            </header>
+            <nav class="nav-group">
+              <h5 class="nav-group-title">Servers</h5>
+              <span class="nav-group-item" ng-repeat="server in main.serverList" ng-click="main.selectServer(server)" ng-class="{active: main.isServerSelected(server)}">
+                <span class="icon icon-record" ng-style="{color: server.started ? '#34c84a' : '#fc605b'}"></span>
+                {{server.name}}
+              </span>
+            </nav>
+          </div>
+
+          <div class="pane">
+            <table class="table-striped">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Kind</th>
+                  <th>Date Modified</th>
+                  <th>Author</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>bars.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <dialog id="editableServerDialog">
+        <header class="toolbar toolbar-header">
+            <h1 class="title">Add New Server</h1>
+        </header>
+
+        <form style="padding: 10px">
+          <div class="form-group">
+              <label>Name</label>
+              <input type="text" class="form-control" ng-model="main.editableServer.name" placeholder="">
+          </div>
+          <div class="form-group">
+              <label>Remote host/IP</label>
+              <input type="text" class="form-control" ng-model="main.editableServer.remoteHost" placeholder="">
+          </div>
+          <div class="form-group">
+              <label>Remote port</label>
+              <input type="text" class="form-control" ng-model="main.editableServer.remotePort" placeholder="">
+          </div>
+          <div class="form-group">
+              <label>Local port</label>
+              <input type="text" class="form-control" ng-model="main.editableServer.localPort" placeholder="">
+          </div>
+        </form>
+
+        <footer class="toolbar toolbar-footer">
+            <div class="toolbar-actions">
+                <button class="btn btn-primary pull-right" ng-click="main.addNewServer()" style="width:50pt">Add</button>
+                <button class="btn btn-default pull-right" ng-click="main.closeNewServerDialog()" style="width:50pt">Cancel</button>
+            </div>
+        </footer>
+    </dialog>
+
+  </body>
+</html>
