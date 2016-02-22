@@ -5,6 +5,7 @@ var Menu = remote.require('menu')
 var MenuItem = remote.require('menu-item')
 let hoxy = require('hoxy');
 let hljs = require('highlight.js');
+var jsonfile = require('jsonfile');
 //window.$ = window.jQuery = require('jquery');
 
 //require("../bower_components/jquery.splitter/js/jquery.splitter-0.20.0.js");
@@ -38,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
 angular.module("BoxyApp", [])
 .controller("MainController", function($scope, $sce) {
   this.serverList = [
+    /*
     {
       name: "HTTP Bin",
       remoteURL: "http://httpbin.org",
@@ -52,6 +54,7 @@ angular.module("BoxyApp", [])
       started: false,
       requestList: []
     }
+    */
   ];
   this.editableServer = {
     name: "",
@@ -91,6 +94,35 @@ angular.module("BoxyApp", [])
     document.getElementById("editableServerDialog").close();
   }
 
+  function getUserHome() {
+    return process.env.HOME || process.env.USERPROFILE;
+  }
+
+  this.saveServerFile = function() {
+    var file = getUserHome() + "/" + ".boxy";
+
+    jsonfile.writeFile(file, this.serverList, function (err) {
+      if (err !== null) {
+        alert(`Filed to save settings: ${file}`);
+        console.error(err);
+      }
+    });
+  }
+
+  this.loadServerFile = function() {
+    var file = getUserHome() + "/" + ".boxy";
+
+    jsonfile.readFile(file, (err, obj) => {
+      if (err !== null || obj === undefined) {
+        alert(`Filed to load settings: ${file}`);
+        console.error(err);
+      } else {
+        this.serverList = obj;
+        $scope.$apply();
+      }
+    });
+  }
+
   this.addNewServer = function() {
     console.log("Adding new server.");
     this.closeNewServerDialog();
@@ -103,6 +135,7 @@ angular.module("BoxyApp", [])
     }
     this.serverList.push(server);
     this.selectedServer = server;
+    this.saveServerFile();
   };
 
   this.removeServer = function() {
@@ -125,6 +158,8 @@ angular.module("BoxyApp", [])
     this.serverList.splice(idx, 1);
 
     this.selectedServer = undefined;
+
+    this.saveServerFile();
   }
 
   this.openEditServerDialog = function() {
@@ -157,6 +192,8 @@ angular.module("BoxyApp", [])
     }
 
     document.getElementById("editableServerDialog").close();
+
+    this.saveServerFile();
   }
 
   this.startServer = function() {
@@ -352,4 +389,9 @@ angular.module("BoxyApp", [])
     return this.selectedRequest.formattedResponseText;
   }
 
+  this.init = function() {
+    this.loadServerFile();
+  }
+
+  this.init(); //Initialize the controller.
 });
