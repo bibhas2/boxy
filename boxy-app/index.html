@@ -6,8 +6,10 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="../css/photon.min.css">
     <script src="../bower_components/angular/angular.min.js"></script>
-    <link rel="stylesheet" href="../node_modules/highlight.js/styles/github.css">
-    <script src="../node_modules/highlight.js/lib/highlight.js"></script>
+    <link rel="stylesheet" href="../node_modules/highlight.js/styles/tomorrow.css">
+    <!-- <script src="../node_modules/highlight.js/lib/highlight.js"></script>
+    <script src="../node_modules/highlight.js/lib/languages/json.js"></script>
+    <script src="../node_modules/highlight.js/lib/languages/xml.js"></script> -->
     <script src="js/boxy.js" charset="utf-8"></script>
     <style>
     dialog {
@@ -24,6 +26,10 @@
     tr.selected {
       color: #fff;
       background-color: #116cd6;
+    }
+    code {
+      font-weight: bold;
+      font-size: 14pt;
     }
     </style>
   </head>
@@ -125,11 +131,15 @@
               </header>
 
               <!-- Request data -->
-              <code ng-if="main.activeTab == 'request'">
+              <code ng-bind-html="main.getFormattedRequest()" ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'pretty'">
+              </code>
+              <code ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'raw'">
                 {{main.selectedRequest.requestText}}
               </code>
               <!-- Response data -->
-              <code ng-if="main.activeTab == 'response'">
+              <code ng-bind-html="main.getFormattedResponse()" ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'pretty'">
+              </code>
+              <code ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'raw'">
                 {{main.selectedRequest.responseText}}
               </code>
             </div>

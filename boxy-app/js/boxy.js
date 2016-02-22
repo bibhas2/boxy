@@ -4,7 +4,7 @@ var remote = require('remote')
 var Menu = remote.require('menu')
 var MenuItem = remote.require('menu-item')
 let hoxy = require('hoxy');
-let highlight = require('highlight.js');
+let hljs = require('highlight.js');
 //window.$ = window.jQuery = require('jquery');
 
 //require("../bower_components/jquery.splitter/js/jquery.splitter-0.20.0.js");
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 angular.module("BoxyApp", [])
-.controller("MainController", function($scope) {
+.controller("MainController", function($scope, $sce) {
   this.serverList = [
     {
       name: "HTTP Bin",
@@ -285,4 +285,41 @@ angular.module("BoxyApp", [])
   this.setResponseBodyFormat = function(fmt) {
     this.responseBodyFormat = fmt;
   }
+
+  this.getFormattedRequest = function() {
+    if (this.selectedRequest === undefined) {
+      return "";
+    }
+
+    //console.log(hljs.listLanguages());
+
+    if (this.selectedRequest.formattedRequestText === undefined) {
+      var fmtTxt = hljs.highlightAuto(this.selectedRequest.requestText, ['json', 'xml']);
+
+      console.log("Raw text: %s", this.selectedRequest.requestText)
+      console.log("Formatted text: %s", fmtTxt.value);
+
+      this.selectedRequest.formattedRequestText = $sce.trustAsHtml(fmtTxt.value);
+    }
+
+    return this.selectedRequest.formattedRequestText;
+  }
+
+  this.getFormattedResponse = function() {
+    if (this.selectedRequest === undefined) {
+      return "";
+    }
+
+    if (this.selectedRequest.formattedResponseText === undefined) {
+      var fmtTxt = hljs.highlightAuto(this.selectedRequest.responseText, ['json', 'xml']);
+
+      console.log("Raw text: %s", this.selectedRequest.responseText)
+      console.log("Formatted text: %s", fmtTxt.value);
+
+      this.selectedRequest.formattedResponseText = $sce.trustAsHtml(fmtTxt.value);
+    }
+
+    return this.selectedRequest.formattedResponseText;
+  }
+
 });
