@@ -1,6 +1,10 @@
+"use strict";
+
 var remote = require('remote')
 var Menu = remote.require('menu')
 var MenuItem = remote.require('menu-item')
+let hoxy = require('hoxy');
+let highlight = require('highlight.js');
 //window.$ = window.jQuery = require('jquery');
 
 //require("../bower_components/jquery.splitter/js/jquery.splitter-0.20.0.js");
@@ -33,32 +37,39 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 angular.module("BoxyApp", [])
-.controller("MainController", function() {
+.controller("MainController", function($scope) {
   this.serverList = [
     {
-      name: "One",
-      started: false
+      name: "HTTP Bin",
+      remoteURL: "http://httpbin.org",
+      localPort: "8080",
+      started: false,
+      requestList: []
     },
     {
-      name: "Two",
-      started: true
+      name: "Example.com",
+      remoteURL: "http://example.com",
+      localPort: "8081",
+      started: false,
+      requestList: []
     }
   ];
   this.editableServer = {
     name: "",
-    remoteHost: "",
-    remotePort: "",
+    remoteURL: "",
     localPort: "",
     started: false
   }
   this.selectedServer = undefined;
   this.dialogMode = "ADD";
+  this.selectedRequest = undefined;
 
   this.isServerSelected = function(server) {
     return server === this.selectedServer;
   }
   this.selectServer = function(server) {
     this.selectedServer = server;
+    this.selectedRequest = undefined;
   }
   this.startButtonEnabled = function() {
     return this.selectedServer !== undefined && !this.selectedServer.started;
@@ -69,8 +80,7 @@ angular.module("BoxyApp", [])
   this.openNewServerDialog = function() {
     this.dialogMode = "ADD";
     this.editableServer.name = "";
-    this.editableServer.remoteHost = "";
-    this.editableServer.remotePort = "";
+    this.editableServer.remoteURL = "";
     this.editableServer.localPort = "";
 
     document.getElementById("editableServerDialog").showModal();
@@ -84,10 +94,10 @@ angular.module("BoxyApp", [])
     this.closeNewServerDialog();
     var server = {
       name: this.editableServer.name,
-      remotePort: this.editableServer.remotePort,
-      remoteHost: this.editableServer.remoteHost,
+      remoteURL: this.editableServer.remoteURL,
       localPort: this.editableServer.localPort,
-      started: this.editableServer.started
+      started: this.editableServer.started,
+      requestList: []
     }
     this.serverList.push(server);
     this.selectedServer = server;
@@ -103,7 +113,12 @@ angular.module("BoxyApp", [])
     if (idx < 0) {
       return;
     }
+
     //Stop the server.
+    if (this.selectedServer.started) {
+      this.stopServer();
+    }
+
     //Remove the server.
     this.serverList.splice(idx, 1);
 
@@ -118,8 +133,7 @@ angular.module("BoxyApp", [])
     this.dialogMode = "EDIT";
 
     this.editableServer.name = this.selectedServer.name;
-    this.editableServer.remoteHost = this.selectedServer.remoteHost;
-    this.editableServer.remotePort = this.selectedServer.remotePort;
+    this.editableServer.remoteURL = this.selectedServer.remoteURL;
     this.editableServer.localPort = this.selectedServer.localPort;
 
     document.getElementById("editableServerDialog").showModal();
@@ -131,10 +145,94 @@ angular.module("BoxyApp", [])
     }
 
     this.selectedServer.name = this.editableServer.name;
-    this.selectedServer.remoteHost = this.editableServer.remoteHost;
-    this.selectedServer.remotePort = this.editableServer.remotePort;
+    this.selectedServer.remoteURL = this.editableServer.remoteURL;
     this.selectedServer.localPort = this.editableServer.localPort;
+
+    if (this.selectedServer.started) {
+      //Restart the server
+      this.stopServer();
+      this.startServer();
+    }
 
     document.getElementById("editableServerDialog").close();
   }
+
+  this.startServer = function() {
+    if (this.selectedServer === undefined || this.selectedServer.started) {
+      return;
+    }
+
+    var theServer = this.selectedServer; //Closure variable
+
+    theServer.proxy = hoxy.createServer({
+      reverse: theServer.remoteURL
+    }).listen(theServer.localPort);
+    theServer.started = true;
+    theServer.proxy.intercept({
+      phase: 'response',
+      as: 'buffer'
+    }, (req, resp, cycle) => {
+      console.log(req);
+      console.log(resp);
+      var textTypes = [
+        "application/xml",
+        "application/json",
+        "text/html",
+        "text/json"
+      ]
+      var contentType = resp.headers["content-type"];
+      var respTxt = "";
+
+      if (textTypes.some((type) => {
+          return type === contentType;
+      })) {
+        console.log("Detected text type response.")
+        var buff = resp.buffer;
+        if (buff !== undefined) {
+          respTxt = buff.toString('utf8');
+        }
+      }
+
+      contentType = req.headers["content-type"];
+      var reqTxt = "";
+
+      if (textTypes.some((type) => {
+          return type === contentType;
+      })) {
+        console.log("Detected text type request.")
+        var buff = req.buffer;
+        if (buff !== undefined) {
+          reqTxt = buff.toString('utf8');
+        }
+      }
+
+      theServer.requestList.push({
+          request: req,
+          response: resp,
+          responseText: respTxt,
+          requestText: reqTxt
+        });
+      $scope.$apply();
+    });
+  }
+
+  this.stopServer = function() {
+    if (this.selectedServer === undefined || !this.selectedServer.started) {
+      return;
+    }
+
+    this.selectedServer.proxy.close();
+    this.selectedServer.proxy = undefined;
+    this.selectedServer.started = false;
+  }
+
+  this.selectRequest = function(req) {
+    this.selectedRequest = req;
+    //console.log(req.requestText);
+  }
+
+  this.isRequestSelected = function(req) {
+    return this.selectedRequest === req;
+  }
+
 });

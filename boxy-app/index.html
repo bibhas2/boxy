@@ -19,6 +19,10 @@
           background: rgba(0,0,0,0.2);
       }
     }
+    tr.selected {
+      color: #fff;
+      background-color: #116cd6;
+    }
     </style>
   </head>
   <body ng-app="BoxyApp" ng-controller="MainController as main">
@@ -45,10 +49,10 @@
                   <button class="btn btn-default" title="Edit the server settings" ng-if="main.selectedServer !== undefined" ng-click="main.openEditServerDialog()">
                     <span class="icon icon-pencil"></span>
                   </button>
-                  <button class="btn btn-default" title="Start the server" ng-if="main.startButtonEnabled()">
+                  <button class="btn btn-default" title="Start the server" ng-if="main.startButtonEnabled()" ng-click="main.startServer()">
                     <span class="icon icon-play" style="color: #34c84a"></span>
                   </button>
-                  <button class="btn btn-default" title="Stop the server" ng-if="main.stopButtonEnabled()">
+                  <button class="btn btn-default" title="Stop the server" ng-if="main.stopButtonEnabled()" ng-click="main.stopServer()">
                     <span class="icon icon-stop" style="color: #fc605b"></span>
                   </button>
                 </div>
@@ -64,22 +68,20 @@
           </div>
 
           <div class="pane" style="height:100%">
-            <div style="height:35%">
-              <table class="table-striped">
+            <div style="height:35%;overflow-y:auto">
+              <table __class="table-striped">
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Kind</th>
-                    <th>Date Modified</th>
-                    <th>Author</th>
+                    <th width="50%">Path</th>
+                    <th width="25%">Status</th>
+                    <th width="25%">Response Time</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>bars.scss</td>
-                    <td>Document</td>
-                    <td>Oct 13, 2015</td>
-                    <td>connors</td>
+                  <tr ng-repeat="req in main.selectedServer.requestList" ng-click="main.selectRequest(req)" ng-class="{selected: main.isRequestSelected(req)}">
+                    <td>{{req.request.url}}</td>
+                    <td>{{req.response.statusCode}}</td>
+                    <td></td>
                   </tr>
                 </tbody>
               </table>
@@ -106,19 +108,15 @@
 
         <form style="padding: 10px">
           <div class="form-group">
-              <label>Name</label>
+              <label>Name:</label>
               <input type="text" class="form-control" ng-model="main.editableServer.name" placeholder="">
           </div>
           <div class="form-group">
-              <label>Remote host/IP</label>
-              <input type="text" class="form-control" ng-model="main.editableServer.remoteHost" placeholder="">
+              <label>Remote URL:</label>
+              <input type="text" class="form-control" ng-model="main.editableServer.remoteURL" placeholder="http://www.example.com:8080/">
           </div>
           <div class="form-group">
-              <label>Remote port</label>
-              <input type="text" class="form-control" ng-model="main.editableServer.remotePort" placeholder="">
-          </div>
-          <div class="form-group">
-              <label>Local port</label>
+              <label>Local port:</label>
               <input type="text" class="form-control" ng-model="main.editableServer.localPort" placeholder="">
           </div>
         </form>
