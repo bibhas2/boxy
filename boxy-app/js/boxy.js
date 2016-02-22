@@ -94,6 +94,7 @@ angular.module("BoxyApp", [])
   this.activeTab = 'request';
   this.requestBodyFormat = 'pretty';
   this.responseBodyFormat = 'pretty';
+  this.showHeaders = false;
 
   this.isServerSelected = function(server) {
     return server === this.selectedServer;
@@ -152,7 +153,13 @@ angular.module("BoxyApp", [])
         }
         console.error(err);
       } else {
-        this.serverList = obj;
+        this.serverList = obj.map(server => {
+          //Fill in mandatory fields
+          server.requestList = [];
+          server.started = false;
+
+          return server;
+        });
         $scope.$apply();
       }
     });

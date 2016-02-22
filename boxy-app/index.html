@@ -27,6 +27,7 @@
     code {
       font-weight: bold;
       font-size: 14pt;
+      display: block;
     }
     </style>
   </head>
@@ -123,6 +124,22 @@
                       <span class="icon icon-tools"></span> &nbsp;Raw
                     </button>
                   </div>
+                  <div class="btn-group">
+                    <button class="btn btn-default" ng-class="{active: main.showHeaders}" title="Show headers" ng-click="main.showHeaders = !main.showHeaders">
+                      <span class="icon" ng-class="{'icon-down-open': !main.showHeaders, 'icon-up-open': main.showHeaders}"></span> &nbsp;Headers
+                    </button>
+                  </div>
+                </div>
+
+                <div ng-if="main.showHeaders && main.activeTab == 'request'">
+                  <code ng-repeat="(key, value) in main.selectedRequest.request.headers">
+                    {{key}}: {{value}}
+                  </code>
+                </div>
+                <div ng-if="main.showHeaders && main.activeTab == 'response'">
+                  <code ng-repeat="(key, value) in main.selectedRequest.response.headers">
+                    {{key}}: {{value}}
+                  </code>
                 </div>
 
               </header>
