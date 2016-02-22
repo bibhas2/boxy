@@ -12,7 +12,7 @@ let mainWindow;
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600, title:'Boxy'});
+  mainWindow = new BrowserWindow({width: 1000, height: 800, title:'Boxy'});
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/boxy-app/index.html');
