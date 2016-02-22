@@ -174,6 +174,7 @@ angular.module("BoxyApp", [])
       reverse: theServer.remoteURL
     }).listen(theServer.localPort);
     theServer.started = true;
+
     theServer.proxy.intercept({
       phase: 'request',
       as: 'buffer'
@@ -195,7 +196,8 @@ angular.module("BoxyApp", [])
       }
       req.boxyRequestData = {
         requestText: reqTxt,
-        request: req
+        request: req,
+        startTime: new Date()
       };
     });
 
@@ -222,6 +224,16 @@ angular.module("BoxyApp", [])
 
       req.boxyRequestData.response = resp;
       req.boxyRequestData.responseText = respTxt;
+      req.boxyRequestData.endTime = new Date();
+      req.boxyRequestData.duration = req.boxyRequestData.endTime.getTime() -
+        req.boxyRequestData.startTime.getTime();
+      req.boxyRequestData.formattedStartTime = "" +
+        (req.boxyRequestData.startTime.getMonth() + 1) + "/" +
+        req.boxyRequestData.startTime.getDate() + "/" +
+        req.boxyRequestData.startTime.getFullYear() + " " +
+        req.boxyRequestData.startTime.getHours() + ":" +
+        req.boxyRequestData.startTime.getMinutes();
+
 
       theServer.requestList.push(req.boxyRequestData);
 

@@ -72,16 +72,18 @@
               <table __class="table-striped">
                 <thead>
                   <tr>
+                    <th width="20%">When</th>
                     <th width="50%">Path</th>
-                    <th width="25%">Status</th>
-                    <th width="25%">Response Time</th>
+                    <th width="15%">Status</th>
+                    <th width="15%">Response Time (ms)</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr ng-repeat="req in main.selectedServer.requestList" ng-click="main.selectRequest(req)" ng-class="{selected: main.isRequestSelected(req)}">
+                    <td>{{req.formattedStartTime}}</td>
                     <td>{{req.request.url}}</td>
                     <td>{{req.response.statusCode}}</td>
-                    <td></td>
+                    <td>{{req.duration}}</td>
                   </tr>
                 </tbody>
               </table>
