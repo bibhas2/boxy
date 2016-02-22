@@ -129,7 +129,7 @@ angular.module("BoxyApp", [])
 
     jsonfile.writeFile(file, this.serverList, function (err) {
       if (err !== null) {
-        alert(`Filed to save settings: ${file}`);
+        alert(`Filed to save settings: ${file}`);          
         console.error(err);
       }
     });
@@ -140,7 +140,9 @@ angular.module("BoxyApp", [])
 
     jsonfile.readFile(file, (err, obj) => {
       if (err !== null || obj === undefined) {
-        alert(`Filed to load settings: ${file}`);
+        if (err.code !== 'ENOENT') {
+          alert(`Filed to load settings: ${file}`);
+        }
         console.error(err);
       } else {
         this.serverList = obj;

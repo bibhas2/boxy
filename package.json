@@ -4,7 +4,9 @@
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron main.js",
+    "pack:osx": "electron-packager . Boxy --platform=darwin --arch=x64 --version=0.36.7 --icon=assets/boxy.png --out=dist --ignore=dist",
+    "build:osx": "npm run pack:osx && electron-builder dist/osx/Boxy.app --platform=osx --out=\"dist/osx\" --config=packager.json"
   },
   "repository": {
     "type": "git",
@@ -23,6 +25,8 @@
   },
   "homepage": "https://github.com/atom/electron-quick-start#readme",
   "devDependencies": {
+    "electron-builder": "^2.7.2",
+    "electron-packager": "^5.2.1",
     "electron-prebuilt": "^0.36.0"
   },
   "dependencies": {
