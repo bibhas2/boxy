@@ -6,6 +6,8 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="../css/photon.min.css">
     <script src="../bower_components/angular/angular.min.js"></script>
+    <link rel="stylesheet" href="../node_modules/highlight.js/styles/github.css">
+    <script src="../node_modules/highlight.js/lib/highlight.js"></script>
     <script src="js/boxy.js" charset="utf-8"></script>
     <style>
     dialog {
@@ -88,15 +90,23 @@
                 </tbody>
               </table>
             </div>
-            <div style="height:65%;background:grey">
+            <div style="height:65%">
               <div class="tab-group">
-                <div class="tab-item active">
+                <div class="tab-item" ng-click="main.activeTab = 'request'" ng-class="{active: main.activeTab == 'request'}">
                   Request
                 </div>
-                <div class="tab-item">
+                <div class="tab-item" ng-click="main.activeTab = 'response'" ng-class="{active: main.activeTab == 'response'}">
                   Response
                 </div>
               </div>
+              <!-- Request data -->
+              <code ng-if="main.activeTab == 'request'">
+                {{main.selectedRequest.requestText}}
+              </code>
+              <!-- Response data -->
+              <code ng-if="main.activeTab == 'response'">
+                {{main.selectedRequest.responseText}}
+              </code>
             </div>
           </div>
         </div>

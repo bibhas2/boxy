@@ -63,6 +63,7 @@ angular.module("BoxyApp", [])
   this.selectedServer = undefined;
   this.dialogMode = "ADD";
   this.selectedRequest = undefined;
+  this.activeTab = undefined;
 
   this.isServerSelected = function(server) {
     return server === this.selectedServer;
@@ -253,6 +254,7 @@ angular.module("BoxyApp", [])
 
   this.selectRequest = function(req) {
     this.selectedRequest = req;
+    this.activeTab = 'request';
     console.log("Request: %s\n", req.requestText);
     console.log("Response: %s\n", req.responseText);
   }
