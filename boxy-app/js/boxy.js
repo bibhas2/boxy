@@ -64,6 +64,8 @@ angular.module("BoxyApp", [])
   this.dialogMode = "ADD";
   this.selectedRequest = undefined;
   this.activeTab = 'request';
+  this.requestBodyFormat = 'pretty';
+  this.responseBodyFormat = 'pretty';
 
   this.isServerSelected = function(server) {
     return server === this.selectedServer;
@@ -276,4 +278,11 @@ angular.module("BoxyApp", [])
     return this.selectedRequest === req;
   }
 
+  this.setRequestBodyFormat = function(fmt) {
+    this.requestBodyFormat = fmt;
+  }
+
+  this.setResponseBodyFormat = function(fmt) {
+    this.responseBodyFormat = fmt;
+  }
 });
