@@ -129,7 +129,7 @@ angular.module("BoxyApp", [])
 
     jsonfile.writeFile(file, this.serverList, function (err) {
       if (err !== null) {
-        alert(`Filed to save settings: ${file}`);          
+        alert(`Filed to save settings: ${file}`);
         console.error(err);
       }
     });
@@ -253,7 +253,7 @@ angular.module("BoxyApp", [])
         var reqTxt = "";
 
         if (textTypes.some((type) => {
-            return type === contentType;
+            return contentType !== undefined && contentType.startsWith(type);
         })) {
           console.log("Detected text type request.")
           var buff = req.buffer;
@@ -280,7 +280,7 @@ angular.module("BoxyApp", [])
         var respTxt = "";
 
         if (textTypes.some((type) => {
-            return type === contentType;
+            return contentType !== undefined && contentType.startsWith(type);
         })) {
           console.log("Detected text type response.")
           var buff = resp.buffer;
@@ -382,11 +382,11 @@ angular.module("BoxyApp", [])
     var contentType = this.getContentType(entity);
 
     textTypes.some(typeItem => {
-      if (typeItem[0] === contentType) {
+      if (contentType !== undefined && contentType.startsWith(typeItem[0])) {
         //Beautify first
         if (typeItem[2] !== undefined) {
           //text = typeItem[2](text);
-          console.log("vkbeautify: %s", text);
+          //console.log("vkbeautify: %s", text);
         }
         //Then syntax highlight
         text = hljs.highlightAuto(text, [typeItem[1]]);
