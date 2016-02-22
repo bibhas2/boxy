@@ -286,23 +286,54 @@ angular.module("BoxyApp", [])
     this.responseBodyFormat = fmt;
   }
 
+  //Item can be a hoxy request or response
+  this.getContentType = function(item) {
+    return item.headers["content-type"];
+  }
+
   this.getFormattedRequest = function() {
     if (this.selectedRequest === undefined) {
       return "";
     }
 
-    //console.log(hljs.listLanguages());
-
     if (this.selectedRequest.formattedRequestText === undefined) {
-      var fmtTxt = hljs.highlightAuto(this.selectedRequest.requestText, ['json', 'xml']);
+      var fmtTxt = this.prettyfy(this.selectedRequest.request, this.selectedRequest.requestText)
 
-      console.log("Raw text: %s", this.selectedRequest.requestText)
-      console.log("Formatted text: %s", fmtTxt.value);
+      // console.log("Raw text: %s", this.selectedRequest.requestText)
+      // console.log("Formatted text: %s", fmtTxt.value);
 
       this.selectedRequest.formattedRequestText = $sce.trustAsHtml(fmtTxt.value);
     }
 
     return this.selectedRequest.formattedRequestText;
+  }
+
+  this.prettyfy = function(entity, text) {
+    var textTypes = [
+      ["application/xml", "xml", undefined],
+      ["application/json", "json", undefined],
+      ["text/html", "html", undefined],
+      ["text/json", "json", undefined]
+    ];
+    var contentType = this.getContentType(entity);
+
+    textTypes.some(typeItem => {
+      if (typeItem[0] === contentType) {
+        //Beautify first
+        if (typeItem[2] !== undefined) {
+          //text = typeItem[2](text);
+          console.log("vkbeautify: %s", text);
+        }
+        //Then syntax highlight
+        text = hljs.highlightAuto(text, [typeItem[1]]);
+
+        return true;
+      }
+
+      return false;
+    });
+
+    return text;
   }
 
   this.getFormattedResponse = function() {
@@ -311,10 +342,10 @@ angular.module("BoxyApp", [])
     }
 
     if (this.selectedRequest.formattedResponseText === undefined) {
-      var fmtTxt = hljs.highlightAuto(this.selectedRequest.responseText, ['json', 'xml']);
+      var fmtTxt = this.prettyfy(this.selectedRequest.response, this.selectedRequest.responseText)
 
-      console.log("Raw text: %s", this.selectedRequest.responseText)
-      console.log("Formatted text: %s", fmtTxt.value);
+      // console.log("Raw text: %s", this.selectedRequest.responseText)
+      // console.log("Formatted text: %s", fmtTxt.value);
 
       this.selectedRequest.formattedResponseText = $sce.trustAsHtml(fmtTxt.value);
     }
