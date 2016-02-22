@@ -4,6 +4,7 @@ var remote = require('remote')
 const electron = remote.require('electron');
 // Module to control application life.
 const app = electron.app;
+const clipboard = electron.clipboard;
 
 var Menu = remote.require('menu')
 var MenuItem = remote.require('menu-item')
@@ -429,6 +430,21 @@ angular.module("BoxyApp", [])
     }
 
     return this.selectedRequest.formattedResponseText;
+  }
+
+  this.copyText = function() {
+    if (this.selectedRequest === undefined) {
+      return;
+    }
+
+    var textToCopy = "";
+
+    if (this.activeTab === 'request') {
+      textToCopy = this.selectedRequest.requestText;
+    } else if (this.activeTab === 'response') {
+      textToCopy = this.selectedRequest.responseText;
+    }
+    clipboard.writeText(textToCopy);
   }
 
   this.init = function() {
