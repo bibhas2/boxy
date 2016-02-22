@@ -27,3 +27,6 @@ npm run pack:osx
 ```
 
 The app will be in ``dist/Boxy-darwin-x64/Boxy.app``.
+
+## Using Boxy
+![Demo](https://raw.githubusercontent.com/bibhas2/boxy/master/assets/demo.gif)
