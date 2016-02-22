@@ -1,6 +1,10 @@
 "use strict";
 
 var remote = require('remote')
+const electron = remote.require('electron');
+// Module to control application life.
+const app = electron.app;
+
 var Menu = remote.require('menu')
 var MenuItem = remote.require('menu-item')
 let hoxy = require('hoxy');
@@ -9,6 +13,28 @@ var jsonfile = require('jsonfile');
 //window.$ = window.jQuery = require('jquery');
 
 //require("../bower_components/jquery.splitter/js/jquery.splitter-0.20.0.js");
+var template = [
+  {
+      label: app.getName(),
+      submenu: [
+        {
+          label: 'About ' + name,
+          role: 'about'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Quit',
+          accelerator: 'Command+Q',
+          click: function() { app.quit(); }
+        },
+      ]
+    }
+];
+
+var menu = Menu.buildFromTemplate(template);
+Menu.setApplicationMenu(menu);
 
 // Build our new menu
 var menu = new Menu()
