@@ -123,22 +123,26 @@
                       <span class="icon icon-tools"></span> &nbsp;Raw
                     </button>
                   </div>
-                <div>
+                </div>
 
               </header>
 
               <!-- Request data -->
-              <code ng-bind-html="main.getFormattedRequest()" ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'pretty'">
-              </code>
-              <code ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'raw'">
-                {{main.selectedRequest.requestText}}
-              </code>
+              <div style="overflow:auto" ng-if="main.activeTab == 'request'">
+                <code ng-bind-html="main.getFormattedRequest()" ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'pretty'">
+                </code>
+                <code ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'raw'">
+                  {{main.selectedRequest.requestText}}
+                </code>
+              </div>
               <!-- Response data -->
-              <code ng-bind-html="main.getFormattedResponse()" ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'pretty'">
-              </code>
-              <code ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'raw'">
-                {{main.selectedRequest.responseText}}
-              </code>
+              <div style="overflow:auto" ng-if="main.activeTab == 'response'">
+                <code ng-bind-html="main.getFormattedResponse()" ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'pretty'">
+                </code>
+                <code ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'raw'">
+                  {{main.selectedRequest.responseText}}
+                </code>
+              </div>
             </div>
           </div>
         </div>
