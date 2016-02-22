@@ -12,10 +12,9 @@ let hljs = require('highlight.js');
 // Build our new menu
 var menu = new Menu()
 menu.append(new MenuItem({
-  label: 'Delete',
+  label: 'Open developer tool',
   click: function() {
-    // Trigger an alert when menu item is clicked
-    alert('Deleted')
+    remote.getCurrentWindow().webContents.openDevTools();
   }
 }))
 menu.append(new MenuItem({
