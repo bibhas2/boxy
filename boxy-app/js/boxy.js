@@ -162,6 +162,12 @@ angular.module("BoxyApp", [])
       return;
     }
 
+    var textTypes = [
+      "application/xml",
+      "application/json",
+      "text/html",
+      "text/json"
+    ];
     var theServer = this.selectedServer; //Closure variable
 
     theServer.proxy = hoxy.createServer({
@@ -169,17 +175,36 @@ angular.module("BoxyApp", [])
     }).listen(theServer.localPort);
     theServer.started = true;
     theServer.proxy.intercept({
+      phase: 'request',
+      as: 'buffer'
+    }, (req, resp, cycle) => {
+      //console.log(req.buffer.toString('utf8'));
+      var contentType = req.headers["content-type"];
+      var reqTxt = "";
+
+      if (textTypes.some((type) => {
+          return type === contentType;
+      })) {
+        console.log("Detected text type request.")
+        var buff = req.buffer;
+        if (buff !== undefined) {
+          reqTxt = buff.toString('utf8');
+        } else {
+          console.log("Request buffer is undefined.");
+        }
+      }
+      req.boxyRequestData = {
+        requestText: reqTxt,
+        request: req
+      };
+    });
+
+    theServer.proxy.intercept({
       phase: 'response',
       as: 'buffer'
     }, (req, resp, cycle) => {
       console.log(req);
       console.log(resp);
-      var textTypes = [
-        "application/xml",
-        "application/json",
-        "text/html",
-        "text/json"
-      ]
       var contentType = resp.headers["content-type"];
       var respTxt = "";
 
@@ -190,28 +215,16 @@ angular.module("BoxyApp", [])
         var buff = resp.buffer;
         if (buff !== undefined) {
           respTxt = buff.toString('utf8');
+        } else {
+          console.log("Response buffer is undefined.");
         }
       }
 
-      contentType = req.headers["content-type"];
-      var reqTxt = "";
+      req.boxyRequestData.response = resp;
+      req.boxyRequestData.responseText = respTxt;
 
-      if (textTypes.some((type) => {
-          return type === contentType;
-      })) {
-        console.log("Detected text type request.")
-        var buff = req.buffer;
-        if (buff !== undefined) {
-          reqTxt = buff.toString('utf8');
-        }
-      }
+      theServer.requestList.push(req.boxyRequestData);
 
-      theServer.requestList.push({
-          request: req,
-          response: resp,
-          responseText: respTxt,
-          requestText: reqTxt
-        });
       $scope.$apply();
     });
   }
@@ -228,7 +241,8 @@ angular.module("BoxyApp", [])
 
   this.selectRequest = function(req) {
     this.selectedRequest = req;
-    //console.log(req.requestText);
+    console.log("Request: %s\n", req.requestText);
+    console.log("Response: %s\n", req.responseText);
   }
 
   this.isRequestSelected = function(req) {
