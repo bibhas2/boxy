@@ -126,8 +126,15 @@ angular.module("BoxyApp", [])
 
   this.saveServerFile = function() {
     var file = getUserHome() + "/" + ".boxy";
+    var serverList = this.serverList.map(server => {
+      return {
+        name: server.name,
+        remoteURL: server.remoteURL,
+        localPort: server.localPort
+      }
+    });
 
-    jsonfile.writeFile(file, this.serverList, function (err) {
+    jsonfile.writeFile(file, serverList, function (err) {
       if (err !== null) {
         alert(`Filed to save settings: ${file}`);
         console.error(err);
