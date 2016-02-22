@@ -63,7 +63,7 @@ angular.module("BoxyApp", [])
   this.selectedServer = undefined;
   this.dialogMode = "ADD";
   this.selectedRequest = undefined;
-  this.activeTab = undefined;
+  this.activeTab = 'request';
 
   this.isServerSelected = function(server) {
     return server === this.selectedServer;
@@ -173,72 +173,85 @@ angular.module("BoxyApp", [])
 
     theServer.proxy = hoxy.createServer({
       reverse: theServer.remoteURL
-    }).listen(theServer.localPort);
-    theServer.started = true;
-
-    theServer.proxy.intercept({
-      phase: 'request',
-      as: 'buffer'
-    }, (req, resp, cycle) => {
-      //console.log(req.buffer.toString('utf8'));
-      var contentType = req.headers["content-type"];
-      var reqTxt = "";
-
-      if (textTypes.some((type) => {
-          return type === contentType;
-      })) {
-        console.log("Detected text type request.")
-        var buff = req.buffer;
-        if (buff !== undefined) {
-          reqTxt = buff.toString('utf8');
-        } else {
-          console.log("Request buffer is undefined.");
-        }
-      }
-      req.boxyRequestData = {
-        requestText: reqTxt,
-        request: req,
-        startTime: new Date()
-      };
-    });
-
-    theServer.proxy.intercept({
-      phase: 'response',
-      as: 'buffer'
-    }, (req, resp, cycle) => {
-      console.log(req);
-      console.log(resp);
-      var contentType = resp.headers["content-type"];
-      var respTxt = "";
-
-      if (textTypes.some((type) => {
-          return type === contentType;
-      })) {
-        console.log("Detected text type response.")
-        var buff = resp.buffer;
-        if (buff !== undefined) {
-          respTxt = buff.toString('utf8');
-        } else {
-          console.log("Response buffer is undefined.");
-        }
-      }
-
-      req.boxyRequestData.response = resp;
-      req.boxyRequestData.responseText = respTxt;
-      req.boxyRequestData.endTime = new Date();
-      req.boxyRequestData.duration = req.boxyRequestData.endTime.getTime() -
-        req.boxyRequestData.startTime.getTime();
-      req.boxyRequestData.formattedStartTime = "" +
-        (req.boxyRequestData.startTime.getMonth() + 1) + "/" +
-        req.boxyRequestData.startTime.getDate() + "/" +
-        req.boxyRequestData.startTime.getFullYear() + " " +
-        req.boxyRequestData.startTime.getHours() + ":" +
-        req.boxyRequestData.startTime.getMinutes();
-
-
-      theServer.requestList.push(req.boxyRequestData);
-
+    })
+    .listen(theServer.localPort, function() {
+      theServer.started = true;
       $scope.$apply();
+
+      theServer.proxy.intercept({
+        phase: 'request',
+        as: 'buffer'
+      }, (req, resp, cycle) => {
+        //console.log(req.buffer.toString('utf8'));
+        var contentType = req.headers["content-type"];
+        var reqTxt = "";
+
+        if (textTypes.some((type) => {
+            return type === contentType;
+        })) {
+          console.log("Detected text type request.")
+          var buff = req.buffer;
+          if (buff !== undefined) {
+            reqTxt = buff.toString('utf8');
+          } else {
+            console.log("Request buffer is undefined.");
+          }
+        }
+        req.boxyRequestData = {
+          requestText: reqTxt,
+          request: req,
+          startTime: new Date()
+        };
+      });
+
+      theServer.proxy.intercept({
+        phase: 'response',
+        as: 'buffer'
+      }, (req, resp, cycle) => {
+        console.log(req);
+        console.log(resp);
+        var contentType = resp.headers["content-type"];
+        var respTxt = "";
+
+        if (textTypes.some((type) => {
+            return type === contentType;
+        })) {
+          console.log("Detected text type response.")
+          var buff = resp.buffer;
+          if (buff !== undefined) {
+            respTxt = buff.toString('utf8');
+          } else {
+            console.log("Response buffer is undefined.");
+          }
+        }
+
+        req.boxyRequestData.response = resp;
+        req.boxyRequestData.responseText = respTxt;
+        req.boxyRequestData.endTime = new Date();
+        req.boxyRequestData.duration = req.boxyRequestData.endTime.getTime() -
+          req.boxyRequestData.startTime.getTime();
+        req.boxyRequestData.formattedStartTime = "" +
+          (req.boxyRequestData.startTime.getMonth() + 1) + "/" +
+          req.boxyRequestData.startTime.getDate() + "/" +
+          req.boxyRequestData.startTime.getFullYear() + " " +
+          req.boxyRequestData.startTime.getHours() + ":" +
+          req.boxyRequestData.startTime.getMinutes();
+
+
+        theServer.requestList.push(req.boxyRequestData);
+
+        $scope.$apply();
+      });
+    })
+    .on("error", function(err) {
+      console.log(err);
+      if (err.code === 'EADDRINUSE') {
+        alert(`Could not start server. Port ${err.port} is already in use.`);
+      } else if (err.code === 'EACCES') {
+          alert(`Could not start server. You don't have access to port ${err.port}.`);
+      } else {
+        alert("Failed to start server.")
+      }
     });
   }
 
