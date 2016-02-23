@@ -446,6 +446,14 @@ angular.module("BoxyApp", ['ui.codemirror'])
     clipboard.writeText(textToCopy);
   }
 
+  this.removeAllRequests = function() {
+    if (this.selectedServer === undefined) {
+      return;
+    }
+
+    this.selectedServer.requestList.length = 0;
+  }
+
   this.init = function() {
     this.loadServerFile();
   }
