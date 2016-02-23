@@ -30,7 +30,6 @@
     "electron-prebuilt": "^0.36.0"
   },
   "dependencies": {
-    "highlight.js": "^9.1.0",
     "hoxy": "^3.2.0",
     "jquery": "^2.2.0",
     "jsonfile": "^2.2.3"

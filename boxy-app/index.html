@@ -6,8 +6,16 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="../css/photon.min.css">
     <script src="../bower_components/angular/angular.min.js"></script>
-    <link rel="stylesheet" href="../node_modules/highlight.js/styles/tomorrow.css">
+
+    <link rel="stylesheet" href="../bower_components/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="../bower_components/codemirror/theme/eclipse.css">
+    <script src="../bower_components/codemirror/lib/codemirror.js"></script>
+    <script src="../bower_components/codemirror/mode/javascript/javascript.js"></script>
+    <script src="../bower_components/codemirror/mode/xml/xml.js"></script>
+    <script src="../bower_components/angular-ui-codemirror/ui-codemirror.js"></script>
+
     <script src="js/boxy.js" charset="utf-8"></script>
+
     <style>
     dialog {
       padding: 0;
@@ -148,17 +156,15 @@
               </header>
 
               <!-- Request data -->
-              <div style="overflow:auto" ng-if="main.activeTab == 'request'">
-                <code ng-bind-html="main.getFormattedRequest()" ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'pretty'">
-                </code>
+              <div ng-if="main.activeTab == 'request'">
+                <ui-codemirror ui-codemirror-opts="main.requestEditorOptions" ng-model="main.selectedRequest.requestText" ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'pretty'"></ui-codemirror>
                 <code ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'raw'">
                   {{main.selectedRequest.requestText}}
                 </code>
               </div>
               <!-- Response data -->
-              <div style="overflow:auto" ng-if="main.activeTab == 'response'">
-                <code ng-bind-html="main.getFormattedResponse()" ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'pretty'">
-                </code>
+              <div ng-if="main.activeTab == 'response'">
+                <ui-codemirror ui-codemirror-opts="main.responseEditorOptions" ng-model="main.selectedRequest.responseText" ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'pretty'"></ui-codemirror>
                 <code ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'raw'">
                   {{main.selectedRequest.responseText}}
                 </code>

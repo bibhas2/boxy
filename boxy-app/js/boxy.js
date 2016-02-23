@@ -9,7 +9,6 @@ const clipboard = electron.clipboard;
 var Menu = remote.require('menu')
 var MenuItem = remote.require('menu-item')
 let hoxy = require('hoxy');
-let hljs = require('highlight.js');
 var jsonfile = require('jsonfile');
 //window.$ = window.jQuery = require('jquery');
 
@@ -63,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
   })
 })
 
-angular.module("BoxyApp", [])
+angular.module("BoxyApp", ['ui.codemirror'])
 .controller("MainController", function($scope, $sce) {
   this.serverList = [
     /*
@@ -96,6 +95,18 @@ angular.module("BoxyApp", [])
   this.requestBodyFormat = 'pretty';
   this.responseBodyFormat = 'pretty';
   this.showHeaders = false;
+  this.requestEditorOptions = {
+    lineWrapping : true,
+    lineNumbers: true,
+    theme: 'eclipse',
+    mode: ''
+  };
+  this.responseEditorOptions = {
+    lineWrapping : true,
+    lineNumbers: true,
+    theme: 'eclipse',
+    mode: ''
+  };
 
   this.isServerSelected = function(server) {
     return server === this.selectedServer;
@@ -349,8 +360,19 @@ angular.module("BoxyApp", [])
   this.selectRequest = function(req) {
     this.selectedRequest = req;
     this.activeTab = 'request';
-    console.log("Request: %s\n", req.requestText);
-    console.log("Response: %s\n", req.responseText);
+
+    // console.log("Request: %s\n", req.requestText);
+    // console.log("Response: %s\n", req.responseText);
+
+    var typeTable = this.getContentTypeTable(this.selectedRequest.request);
+
+    this.requestEditorOptions.mode = typeTable !== undefined ?
+      typeTable[1] : "";
+
+    typeTable = this.getContentTypeTable(this.selectedRequest.response);
+
+    this.responseEditorOptions.mode = typeTable !== undefined ?
+      typeTable[1] : "";
   }
 
   this.isRequestSelected = function(req) {
@@ -365,46 +387,28 @@ angular.module("BoxyApp", [])
     this.responseBodyFormat = fmt;
   }
 
-  //Item can be a hoxy request or response
-  this.getContentType = function(item) {
-    return item.headers["content-type"];
+  //Entity can be a hoxy request or response
+  this.getContentType = function(entity) {
+    return entity.headers["content-type"];
   }
 
-  this.getFormattedRequest = function() {
-    if (this.selectedRequest === undefined) {
-      return "";
-    }
-
-    if (this.selectedRequest.formattedRequestText === undefined) {
-      var fmtTxt = this.prettyfy(this.selectedRequest.request, this.selectedRequest.requestText)
-
-      // console.log("Raw text: %s", this.selectedRequest.requestText)
-      // console.log("Formatted text: %s", fmtTxt.value);
-
-      this.selectedRequest.formattedRequestText = $sce.trustAsHtml(fmtTxt.value);
-    }
-
-    return this.selectedRequest.formattedRequestText;
-  }
-
-  this.prettyfy = function(entity, text) {
+  this.getContentTypeTable = function(entity) {
     var textTypes = [
-      ["application/xml", "xml", undefined],
-      ["application/json", "json", undefined],
-      ["text/html", "html", undefined],
-      ["text/json", "json", undefined]
+      ["application/xml", "xml"],
+      ["application/json", "javascript"],
+      ["text/html", "xml"],
+      ["text/json", "javascript"]
     ];
     var contentType = this.getContentType(entity);
+    var result = undefined;
+
+    if (contentType === undefined) {
+      return result;
+    }
 
     textTypes.some(typeItem => {
-      if (contentType !== undefined && contentType.startsWith(typeItem[0])) {
-        //Beautify first
-        if (typeItem[2] !== undefined) {
-          //text = typeItem[2](text);
-          //console.log("vkbeautify: %s", text);
-        }
-        //Then syntax highlight
-        text = hljs.highlightAuto(text, [typeItem[1]]);
+      if (contentType.startsWith(typeItem[0])) {
+        result = typeItem;
 
         return true;
       }
@@ -412,24 +416,7 @@ angular.module("BoxyApp", [])
       return false;
     });
 
-    return text;
-  }
-
-  this.getFormattedResponse = function() {
-    if (this.selectedRequest === undefined) {
-      return "";
-    }
-
-    if (this.selectedRequest.formattedResponseText === undefined) {
-      var fmtTxt = this.prettyfy(this.selectedRequest.response, this.selectedRequest.responseText)
-
-      // console.log("Raw text: %s", this.selectedRequest.responseText)
-      // console.log("Formatted text: %s", fmtTxt.value);
-
-      this.selectedRequest.formattedResponseText = $sce.trustAsHtml(fmtTxt.value);
-    }
-
-    return this.selectedRequest.formattedResponseText;
+    return result;
   }
 
   this.copyText = function() {

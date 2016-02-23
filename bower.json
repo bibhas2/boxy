@@ -1,6 +1,8 @@
 {
   "name": "bower-test",
   "dependencies": {
-    "angular": "^1.5.0"
+    "angular": "^1.5.0",
+    "codemirror": "^5.12.0",
+    "angular-ui-codemirror": "^0.3.0"
   }
 }
