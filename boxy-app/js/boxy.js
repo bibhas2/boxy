@@ -452,6 +452,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
     }
 
     this.selectedServer.requestList.length = 0;
+    this.selectedRequest = undefined;
   }
 
   this.init = function() {
