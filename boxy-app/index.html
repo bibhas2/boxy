@@ -37,11 +37,16 @@
       font-size: 14pt;
       display: block;
     }
+    code.raw_view {
+      height: 55vh;
+      overflow-y: auto;
+    }
     .CodeMirror {
       font-weight: bold;
       font-size: 14pt;
+      height: 55vh;
     }
-    
+
     </style>
   </head>
   <body ng-app="BoxyApp" ng-controller="MainController as main">
@@ -86,8 +91,8 @@
             </nav>
           </div>
 
-          <div class="pane" style="height:100%">
-            <div style="height:35%;overflow-y:auto">
+          <div class="pane">
+            <div style="height:35vh;overflow-y:auto">
               <table __class="table-striped">
                 <thead>
                   <tr>
@@ -107,7 +112,8 @@
                 </tbody>
               </table>
             </div>
-            <div style="height:65%">
+
+            <div>
 
               <header class="toolbar toolbar-header">
 
@@ -163,14 +169,14 @@
               <!-- Request data -->
               <div ng-if="main.activeTab == 'request'">
                 <ui-codemirror ui-codemirror-opts="main.requestEditorOptions" ng-model="main.selectedRequest.requestText" ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'pretty'"></ui-codemirror>
-                <code ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'raw'">
+                <code class="raw_view" ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'raw'">
                   {{main.selectedRequest.requestText}}
                 </code>
               </div>
               <!-- Response data -->
               <div ng-if="main.activeTab == 'response'">
                 <ui-codemirror ui-codemirror-opts="main.responseEditorOptions" ng-model="main.selectedRequest.responseText" ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'pretty'"></ui-codemirror>
-                <code ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'raw'">
+                <code class="raw_view" ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'raw'">
                   {{main.selectedRequest.responseText}}
                 </code>
               </div>
