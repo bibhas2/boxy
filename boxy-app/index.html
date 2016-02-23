@@ -96,22 +96,24 @@
           </div>
 
           <div class="pane">
-            <div style="height:35vh;overflow-y:auto">
-              <table __class="table-striped">
-                <thead>
-                  <tr>
-                    <th width="20%">When</th>
-                    <th width="50%">Path</th>
-                    <th width="15%">Status</th>
-                    <th width="15%">Response Time (ms)</th>
-                  </tr>
-                </thead>
+            <table>
+              <thead>
+                <tr>
+                  <th width="20%">When</th>
+                  <th width="50%">Path</th>
+                  <th width="15%">Status</th>
+                  <th width="15%">Response Time (ms)</th>
+                </tr>
+              </thead>
+            </table>
+            <div style="height:30vh;overflow-y:auto">
+              <table>
                 <tbody>
                   <tr ng-repeat="req in main.selectedServer.requestList" ng-click="main.selectRequest(req)" ng-class="{selected: main.isRequestSelected(req)}">
-                    <td>{{req.formattedStartTime}}</td>
-                    <td>{{req.request.url}}</td>
-                    <td>{{req.response.statusCode}}</td>
-                    <td>{{req.duration}}</td>
+                    <td width="20%">{{req.formattedStartTime}}</td>
+                    <td width="50%">{{req.request.url}}</td>
+                    <td width="15%">{{req.response.statusCode}}</td>
+                    <td width="15%">{{req.duration}}</td>
                   </tr>
                 </tbody>
               </table>
