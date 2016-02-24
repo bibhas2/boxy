@@ -32,10 +32,16 @@
       color: #fff;
       background-color: #116cd6;
     }
-    code {
-      font-weight: bold;
+    span.http_header {
       font-size: 14pt;
       display: block;
+      -webkit-user-select: text;
+    }
+    span.http_header code {
+      -webkit-user-select: text;
+    }
+    code.header_name {
+      font-weight: bold;
     }
     pre.raw_view {
       height: 55vh;
@@ -163,14 +169,14 @@
                 </div>
 
                 <div ng-if="main.showHeaders && main.activeTab == 'request'">
-                  <code ng-repeat="(key, value) in main.selectedRequest.request.headers">
-                    {{key}}: {{value}}
-                  </code>
+                  <span class="http_header" ng-repeat="(key, value) in main.selectedRequest.request.headers">
+                    <code class="header_name">{{key}}:</code> <code>{{value}}</code>
+                  </span>
                 </div>
                 <div ng-if="main.showHeaders && main.activeTab == 'response'">
-                  <code ng-repeat="(key, value) in main.selectedRequest.response.headers">
-                    {{key}}: {{value}}
-                  </code>
+                  <span class="http_header" ng-repeat="(key, value) in main.selectedRequest.response.headers">
+                    <code class="header_name">{{key}}:</code> <code>{{value}}</code>
+                  </span>
                 </div>
 
               </header>
