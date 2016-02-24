@@ -37,10 +37,13 @@
       font-size: 14pt;
       display: block;
     }
-    code.raw_view {
+    pre.raw_view {
       height: 55vh;
-      overflow-y: auto;
+      font-weight: bold;
+      font-size: 14pt;
       -webkit-user-select: text;
+      margin-top: 0px;
+      margin-bottom: 0px;
     }
     .CodeMirror {
       font-weight: bold;
@@ -175,16 +178,12 @@
               <!-- Request data -->
               <div ng-if="main.activeTab == 'request'">
                 <ui-codemirror ui-codemirror-opts="main.requestEditorOptions" ng-model="main.selectedRequest.requestText" ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'pretty'"></ui-codemirror>
-                <code class="raw_view" ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'raw'">
-                  {{main.selectedRequest.requestText}}
-                </code>
+                <pre class="raw_view" ng-if="main.activeTab == 'request' && main.requestBodyFormat == 'raw'">{{main.selectedRequest.requestText}}</pre>
               </div>
               <!-- Response data -->
               <div ng-if="main.activeTab == 'response'">
                 <ui-codemirror ui-codemirror-opts="main.responseEditorOptions" ng-model="main.selectedRequest.responseText" ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'pretty'"></ui-codemirror>
-                <code class="raw_view" ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'raw'">
-                  {{main.selectedRequest.responseText}}
-                </code>
+                <pre class="raw_view" ng-if="main.activeTab == 'response' && main.responseBodyFormat == 'raw'">{{main.selectedRequest.responseText}}</pre>
               </div>
             </div>
           </div>
