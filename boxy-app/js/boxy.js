@@ -5,6 +5,7 @@ const electron = remote.require('electron');
 // Module to control application life.
 const app = electron.app;
 const clipboard = electron.clipboard;
+var fs = require('fs')
 
 var Menu = remote.require('menu')
 var MenuItem = remote.require('menu-item')
@@ -453,6 +454,22 @@ angular.module("BoxyApp", ['ui.codemirror'])
 
     this.selectedServer.requestList.length = 0;
     this.selectedRequest = undefined;
+  }
+
+  this.exportAllRequests = function() {
+    electron.dialog.showSaveDialog({title: "Export body"}, (path) => {
+      var s = fs.createWriteStream(path);
+
+      this.selectedServer.requestList.forEach((req) => {
+        s.write(req.requestText);
+        s.write("\n");
+        s.write(req.responseText);
+        s.write("\n");
+      });
+
+      s.end();
+      alert(`All body has been exported to: ${path}`);
+    });
   }
 
   this.init = function() {

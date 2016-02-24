@@ -92,6 +92,9 @@
                   <button class="btn btn-default" title="Remove all requests" ng-if="main.selectedServer !== undefined" ng-click="main.removeAllRequests()">
                     <span class="icon icon-trash"></span>
                   </button>
+                  <button class="btn btn-default" title="Export body for all requests" ng-if="main.selectedServer !== undefined && main.selectedServer.requestList.length > 0" ng-click="main.exportAllRequests()">
+                    <span class="icon icon-export"></span>
+                  </button>
                 </div>
               <div>
             </header>
