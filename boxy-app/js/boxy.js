@@ -330,20 +330,24 @@ angular.module("BoxyApp", ['ui.codemirror'])
           }
         }
 
-        req.boxyRequestData.response = resp;
-        req.boxyRequestData.responseText = respTxt;
-        req.boxyRequestData.endTime = new Date();
-        req.boxyRequestData.duration = req.boxyRequestData.endTime.getTime() -
-          req.boxyRequestData.startTime.getTime();
-        req.boxyRequestData.formattedStartTime = "" +
-          (req.boxyRequestData.startTime.getMonth() + 1) + "/" +
-          req.boxyRequestData.startTime.getDate() + "/" +
-          req.boxyRequestData.startTime.getFullYear() + " " +
-          req.boxyRequestData.startTime.getHours() + ":" +
-          req.boxyRequestData.startTime.getMinutes();
+        var newRequest = req.boxyRequestData;
 
+        //Remove circular reference
+        req.boxyRequestData = undefined;
 
-        theServer.requestList.push(req.boxyRequestData);
+        newRequest.response = resp;
+        newRequest.responseText = respTxt;
+        newRequest.endTime = new Date();
+        newRequest.duration = newRequest.endTime.getTime() -
+          newRequest.startTime.getTime();
+        newRequest.formattedStartTime = "" +
+          (newRequest.startTime.getMonth() + 1) + "/" +
+          newRequest.startTime.getDate() + "/" +
+          newRequest.startTime.getFullYear() + " " +
+          newRequest.startTime.getHours() + ":" +
+          newRequest.startTime.getMinutes();
+
+        theServer.requestList.push(newRequest);
 
         $scope.$apply();
       });
