@@ -56,7 +56,12 @@
       font-size: 14pt;
       height: 55vh;
     }
-
+    .http_status {
+      margin-right: 4px;
+    }
+    .http_status_error {
+      color: red;
+    }
     </style>
   </head>
   <body ng-app="BoxyApp" ng-controller="MainController as main">
@@ -157,6 +162,9 @@
                 </div>
 
                 <div class="toolbar-actions" align="center">
+                  <span class="http_status" ng-class="{http_status_error: main.selectedRequest.response.statusCode >= 400}" ng-if="main.selectedRequest !== undefined"><b>Status: </b>{{main.selectedRequest.response.statusCode}}</span>
+                  <!-- <span class="http_status http_status_error" ng-if="main.errorMessage !== undefined"><span class="icon icon-alert"></span> {{main.errorMessage}}</span> -->
+
                   <div class="btn-group" ng-if="main.activeTab == 'request'">
                     <button class="btn btn-default" ng-class="{active: main.requestBodyFormat == 'pretty'}" title="Show formatted body" ng-click="main.setRequestBodyFormat('pretty')">
                       <span class="icon icon-list"></span> &nbsp;Pretty

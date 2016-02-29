@@ -160,7 +160,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
       }
     });
 
-    jsonfile.writeFile(file, serverList, function (err) {
+    jsonfile.writeFile(file, serverList, (err) => {
       if (err !== null) {
         alert(`Filed to save settings: ${file}`);
         console.error(err);
