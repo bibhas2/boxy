@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron main.js",
-    "pack:osx": "electron-packager . Boxy --overwrite --platform=darwin --arch=x64 --version=0.36.7 --icon=assets/boxy.icns --out=dist --ignore=dist",
+    "pack:osx": "electron-packager . Boxy --overwrite --platform=darwin --arch=x64 --version=0.36.7 --icon=assets/boxy.icns --out=dist  --prune --ignore=dist",
     "build:osx": "npm run pack:osx && electron-builder dist/osx/Boxy.app --platform=osx --out=\"dist/osx\" --config=packager.json"
   },
   "repository": {
