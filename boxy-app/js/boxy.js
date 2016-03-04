@@ -104,7 +104,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
   this.selectedServer = undefined;
   this.dialogMode = "ADD";
   this.selectedRequest = undefined;
-  this.activeTab = 'request';
+  this.activeTab = 'response';
   this.requestBodyFormat = 'pretty';
   this.responseBodyFormat = 'pretty';
   this.showHeaders = false;
@@ -380,7 +380,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
 
   this.selectRequest = function(req) {
     this.selectedRequest = req;
-    this.activeTab = 'request';
+    //this.activeTab = 'response';
 
     // console.log("Request: %s\n", req.requestText);
     // console.log("Response: %s\n", req.responseText);
