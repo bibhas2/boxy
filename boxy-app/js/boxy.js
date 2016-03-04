@@ -350,6 +350,10 @@ angular.module("BoxyApp", ['ui.codemirror'])
         theServer.requestList.push(newRequest);
 
         $scope.$apply();
+        window.setTimeout(() => {
+          var objDiv = document.getElementById("requestListContainer");
+          objDiv.scrollTop = objDiv.scrollHeight;
+        });
       });
     })
     .on("error", function(err) {
