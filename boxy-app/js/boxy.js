@@ -104,6 +104,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
   this.selectedServer = undefined;
   this.dialogMode = "ADD";
   this.selectedRequest = undefined;
+  this.selectedRequestIndex = undefined;
   this.activeTab = 'response';
   this.requestBodyFormat = 'pretty';
   this.responseBodyFormat = 'pretty';
@@ -127,6 +128,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
   this.selectServer = function(server) {
     this.selectedServer = server;
     this.selectedRequest = undefined;
+    this.selectedRequestIndex = undefined;
   }
   this.startButtonEnabled = function() {
     return this.selectedServer !== undefined && !this.selectedServer.started;
@@ -378,8 +380,9 @@ angular.module("BoxyApp", ['ui.codemirror'])
     this.selectedServer.started = false;
   }
 
-  this.selectRequest = function(req) {
+  this.selectRequest = function(req, index) {
     this.selectedRequest = req;
+    this.selectedRequestIndex = index;
     //this.activeTab = 'response';
 
     // console.log("Request: %s\n", req.requestText);
@@ -462,6 +465,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
 
     this.selectedServer.requestList.length = 0;
     this.selectedRequest = undefined;
+    this.this.selectedRequestIndex = undefined;
   }
 
   this.exportAllRequests = function() {
@@ -478,6 +482,37 @@ angular.module("BoxyApp", ['ui.codemirror'])
       s.end();
       alert(`All body has been exported to: ${path}`);
     });
+  }
+
+  this.moveRequestSelection = function(event) {
+    var by = 0;
+
+    if (event.keyCode === 40) {
+      by = 1;
+    } else if (event.keyCode === 38) {
+      by = -1;
+    } else {
+      return;
+    }
+
+    console.log("Moving selection by: %d", by);
+
+    if (this.selectedRequest === undefined || this.selectedRequestIndex === undefined) {
+      return;
+    }
+
+    var newIndex = this.selectedRequestIndex + by;
+
+    if (newIndex >= this.selectedServer.requestList.length) {
+      //Already at the end
+      return;
+    }
+    if (newIndex < 0) {
+      //Already at the start
+      return;
+    }
+
+    this.selectRequest(this.selectedServer.requestList[newIndex], newIndex);
   }
 
   this.init = function() {
