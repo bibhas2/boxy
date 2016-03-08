@@ -11,9 +11,9 @@ var Menu = remote.require('menu')
 var MenuItem = remote.require('menu-item')
 let hoxy = require('hoxy');
 var jsonfile = require('jsonfile');
-//window.$ = window.jQuery = require('jquery');
+var beautify_js = require('js-beautify').js_beautify
+var beautify_html = require('js-beautify').html
 
-//require("../bower_components/jquery.splitter/js/jquery.splitter-0.20.0.js");
 var template = [
   {
       label: app.getName(),
@@ -272,6 +272,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
 
     var textTypes = [
       "application/xml",
+      "text/xml",
       "application/json",
       "text/html",
       "text/json"
@@ -281,7 +282,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
     theServer.proxy = hoxy.createServer({
       reverse: theServer.remoteURL
     })
-    .listen(theServer.localPort, function() {
+    .listen(theServer.localPort, () => {
       theServer.started = true;
       $scope.$apply();
 
@@ -348,6 +349,22 @@ angular.module("BoxyApp", ['ui.codemirror'])
           newRequest.startTime.getFullYear() + " " +
           newRequest.startTime.getHours() + ":" +
           newRequest.startTime.getMinutes();
+
+        var typeTable = this.getContentTypeTable(newRequest.request);
+        if (typeTable !== undefined && typeTable[1] === "javascript") {
+          newRequest.requestTextFormatted = beautify_js(newRequest.requestText, { indent_size: 2 });
+        }
+        if (typeTable !== undefined && typeTable[1] === "xml") {
+          newRequest.requestTextFormatted = beautify_html(newRequest.requestText, { indent_size: 2 });
+        }
+
+        var typeTable = this.getContentTypeTable(newRequest.response);
+        if (typeTable !== undefined && typeTable[1] === "javascript") {
+          newRequest.responseTextFormatted = beautify_js(newRequest.responseText, { indent_size: 2 });
+        }
+        if (typeTable !== undefined && typeTable[1] === "xml") {
+          newRequest.responseTextFormatted = beautify_html(newRequest.responseText, { indent_size: 2 });
+        }
 
         theServer.requestList.push(newRequest);
 
