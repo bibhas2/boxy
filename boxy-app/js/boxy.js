@@ -436,6 +436,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
   this.getContentTypeTable = function(entity) {
     var textTypes = [
       ["application/xml", "xml"],
+      ["text/xml", "xml"],
       ["application/json", "javascript"],
       ["text/html", "xml"],
       ["text/json", "javascript"]
