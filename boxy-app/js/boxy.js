@@ -60,6 +60,11 @@ angular.module("BoxyApp", ['ui.codemirror'])
     theme: 'eclipse',
     mode: ''
   };
+  this.displayFilter = {
+      urlFilter: "",
+      requestBodyFilter: "",
+      responseBodyFilter: ""
+  };
 
   this.isServerSelected = function(server) {
     return server === this.selectedServer;
@@ -209,7 +214,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
   }
 
   function matchesFilter(displayFilter, req) {
-    if (displayFilter.urlFilter !== undefined && displayFilter.urlFilter.length > 0 && req.request.url.indexOf(displayFilter.urlText) < 0) {
+    if (displayFilter.urlFilter !== undefined && displayFilter.urlFilter.length > 0 && req.request.url.indexOf(displayFilter.urlFilter) < 0) {
       return false;
     }
 
@@ -229,9 +234,20 @@ angular.module("BoxyApp", ['ui.codemirror'])
       return;
     }
 
+    this.selectedServer.displayFilter = this.displayFilter;
+
     this.selectedServer.requestList = this.selectedServer.masterRequestList.filter((req) => {
       return matchesFilter(this.selectedServer.displayFilter, req);
     });
+
+    this.selectedRequest = undefined;
+    this.selectedRequestIndex = undefined;
+
+    this.closeDisplayFilterDialog();
+  }
+
+  this.clearDisplayFilter = function() {
+    this.displayFilter = {};
   }
 
   this.startServer = function() {
@@ -509,6 +525,11 @@ angular.module("BoxyApp", ['ui.codemirror'])
   }
 
   this.openDisplayFilterDialog = function() {
+    if (this.selectedServer === undefined) {
+      return;
+    }
+
+    this.displayFilter = this.selectedServer.displayFilter;
     document.getElementById("displayFilterDialog").showModal();
   }
 

@@ -265,22 +265,23 @@
 
         <form style="padding: 10px">
           <div class="form-group">
-              <label>URL contains text:</label>
-              <input type="text" class="form-control" ng-model="main.selectedServer.displayFilter.urlFilter" placeholder="">
+              <label>URL path contains text:</label>
+              <input type="text" class="form-control" ng-model="main.displayFilter.urlFilter" placeholder="">
           </div>
           <div class="form-group">
               <label>Request body contains text:</label>
-              <input type="text" class="form-control" ng-model="main.selectedServer.displayFilter.requestBodyFilter" placeholder="">
+              <input type="text" class="form-control" ng-model="main.displayFilter.requestBodyFilter" placeholder="">
           </div>
           <div class="form-group">
-              <label>Request body contains text:</label>
-              <input type="text" class="form-control" ng-model="main.selectedServer.displayFilter.responseBodyFilter" placeholder="">
+              <label>Response body contains text:</label>
+              <input type="text" class="form-control" ng-model="main.displayFilter.responseBodyFilter" placeholder="">
           </div>
         </form>
 
         <footer class="toolbar toolbar-footer">
             <div class="toolbar-actions">
                 <button class="btn btn-primary pull-right" ng-click="main.applyFilter()" style="width:50pt">Apply</button>
+                <button class="btn btn-default pull-right" ng-click="main.clearDisplayFilter()" style="width:50pt">Clear</button>
                 <button class="btn btn-default pull-right" ng-click="main.closeDisplayFilterDialog()" style="width:50pt">Cancel</button>
             </div>
         </footer>
