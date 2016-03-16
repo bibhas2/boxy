@@ -537,6 +537,18 @@ angular.module("BoxyApp", ['ui.codemirror'])
     document.getElementById("displayFilterDialog").close();
   }
 
+  this.openAggregateReportDialog = function() {
+    if (this.selectedServer === undefined) {
+      return;
+    }
+
+    document.getElementById("aggregateReportDialog").showModal();
+  }
+
+  this.closeAggregateReportDialog = function() {
+    document.getElementById("aggregateReportDialog").close();
+  }
+
   this.init = function() {
     var template = [
       {
