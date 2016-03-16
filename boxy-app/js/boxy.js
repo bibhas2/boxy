@@ -508,6 +508,10 @@ angular.module("BoxyApp", ['ui.codemirror'])
     this.selectRequest(this.selectedServer.requestList[newIndex], newIndex);
   }
 
+  this.openDisplayFilterDialog = function() {
+    document.getElementById("displayFilterDialog").showModal();
+  }
+
   this.closeDisplayFilterDialog = function() {
     document.getElementById("displayFilterDialog").close();
   }
@@ -541,17 +545,6 @@ angular.module("BoxyApp", ['ui.codemirror'])
               { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
               { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
               { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-          ]
-        },
-        {
-          label: "View",
-          submenu: [
-            {
-              label: 'Filter Request List',
-              click: () => {
-                document.getElementById("displayFilterDialog").showModal();
-              }
-            }
           ]
         }
     ];

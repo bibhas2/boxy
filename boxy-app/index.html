@@ -99,11 +99,14 @@
                   <button class="btn btn-default" title="Stop the server" ng-if="main.stopButtonEnabled()" ng-click="main.stopServer()">
                     <span class="icon icon-stop" style="color: #fc605b"></span>
                   </button>
-                  <button class="btn btn-default" title="Remove all requests" ng-if="main.selectedServer !== undefined" ng-click="main.removeAllRequests()">
-                    <span class="icon icon-trash"></span>
+                  <button class="btn btn-default" title="Filter requests" ng-if="main.selectedServer !== undefined" ng-click="main.openDisplayFilterDialog()">
+                    <span class="icon icon-search"></span>
                   </button>
                   <button class="btn btn-default" title="Export body for all requests" ng-if="main.selectedServer !== undefined && main.selectedServer.requestList.length > 0" ng-click="main.exportAllRequests()">
                     <span class="icon icon-export"></span>
+                  </button>
+                  <button class="btn btn-default" title="Remove all requests" ng-if="main.selectedServer !== undefined" ng-click="main.removeAllRequests()">
+                    <span class="icon icon-trash"></span>
                   </button>
                 </div>
               <div>
