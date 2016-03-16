@@ -14,67 +14,6 @@ var jsonfile = require('jsonfile');
 var beautify_js = require('js-beautify').js_beautify
 var beautify_html = require('js-beautify').html
 
-var template = [
-  {
-      label: app.getName(),
-      submenu: [
-        {
-          label: 'About ' + name,
-          role: 'about'
-        },
-        {
-          type: 'separator'
-        },
-        {
-          label: 'Quit',
-          accelerator: 'Command+Q',
-          click: function() { app.quit(); }
-        },
-      ]
-    },
-    {
-      label: "Edit",
-      submenu: [
-          { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-          { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-          { type: "separator" },
-          { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-          { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-          { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-          { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-      ]
-    }
-];
-
-var menu = Menu.buildFromTemplate(template);
-Menu.setApplicationMenu(menu);
-
-// Build our new menu
-var menu = new Menu()
-menu.append(new MenuItem({
-  label: 'Open developer tool',
-  click: function() {
-    remote.getCurrentWindow().webContents.openDevTools();
-  }
-}))
-menu.append(new MenuItem({
-  label: 'More Info...',
-  click: function() {
-    // Trigger an alert when menu item is clicked
-    alert('Here is more information')
-  }
-}))
-
-// Add the listener
-document.addEventListener('DOMContentLoaded', function () {
-  // document.querySelector('.js-context-menu').addEventListener('click', function (event) {
-  //   menu.popup(remote.getCurrentWindow());
-  // })
-  document.addEventListener('contextmenu', function (event) {
-    menu.popup(remote.getCurrentWindow());
-  })
-})
-
 angular.module("BoxyApp", ['ui.codemirror'])
 .controller("MainController", function($scope, $sce) {
   this.serverList = [
@@ -183,7 +122,9 @@ angular.module("BoxyApp", ['ui.codemirror'])
         this.serverList = obj.map(server => {
           //Fill in mandatory fields
           server.requestList = [];
+          server.masterRequestList = [];
           server.started = false;
+          server.displayFilter = {};
 
           return server;
         });
@@ -200,7 +141,9 @@ angular.module("BoxyApp", ['ui.codemirror'])
       remoteURL: this.editableServer.remoteURL,
       localPort: this.editableServer.localPort,
       started: this.editableServer.started,
-      requestList: []
+      requestList: [],
+      masterRequestList: [],
+      displayFilter: {}
     }
     this.serverList.push(server);
     this.selectedServer = server;
@@ -263,6 +206,32 @@ angular.module("BoxyApp", ['ui.codemirror'])
     document.getElementById("editableServerDialog").close();
 
     this.saveServerFile();
+  }
+
+  function matchesFilter(displayFilter, req) {
+    if (displayFilter.urlFilter !== undefined && displayFilter.urlFilter.length > 0 && req.request.url.indexOf(displayFilter.urlText) < 0) {
+      return false;
+    }
+
+    if (displayFilter.requestBodyFilter !== undefined && displayFilter.requestBodyFilter.length > 0 &&  req.requestText.indexOf(displayFilter.requestBodyFilter) < 0) {
+      return false;
+    }
+
+    if (displayFilter.responseBodyFilter !== undefined && displayFilter.responseBodyFilter.length > 0 &&  req.responseText.indexOf(displayFilter.responseBodyFilter) < 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  this.applyFilter = function() {
+    if (this.selectedServer === undefined) {
+      return;
+    }
+
+    this.selectedServer.requestList = this.selectedServer.masterRequestList.filter((req) => {
+      return matchesFilter(this.selectedServer.displayFilter, req);
+    });
   }
 
   this.startServer = function() {
@@ -366,7 +335,12 @@ angular.module("BoxyApp", ['ui.codemirror'])
           newRequest.responseTextFormatted = beautify_html(newRequest.responseText, { indent_size: 2 });
         }
 
-        theServer.requestList.push(newRequest);
+        //Add to the master list
+        theServer.masterRequestList.push(newRequest);
+        //Add to the filter list on if the request matches the filter
+        if (matchesFilter(theServer.displayFilter, newRequest)) {
+          theServer.requestList.push(newRequest);
+        }
 
         $scope.$apply();
         window.setTimeout(() => {
@@ -481,6 +455,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
       return;
     }
 
+    this.selectedServer.masterRequestList.length = 0;
     this.selectedServer.requestList.length = 0;
     this.selectedRequest = undefined;
     this.this.selectedRequestIndex = undefined;
@@ -533,7 +508,77 @@ angular.module("BoxyApp", ['ui.codemirror'])
     this.selectRequest(this.selectedServer.requestList[newIndex], newIndex);
   }
 
+  this.closeDisplayFilterDialog = function() {
+    document.getElementById("displayFilterDialog").close();
+  }
+
   this.init = function() {
+    var template = [
+      {
+          label: app.getName(),
+          submenu: [
+            {
+              label: 'About ' + name,
+              role: 'about'
+            },
+            {
+              type: 'separator'
+            },
+            {
+              label: 'Quit',
+              accelerator: 'Command+Q',
+              click: function() { app.quit(); }
+            },
+          ]
+        },
+        {
+          label: "Edit",
+          submenu: [
+              { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+              { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+              { type: "separator" },
+              { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+              { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+              { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+              { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+          ]
+        },
+        {
+          label: "View",
+          submenu: [
+            {
+              label: 'Filter Request List',
+              click: () => {
+                document.getElementById("displayFilterDialog").showModal();
+              }
+            }
+          ]
+        }
+    ];
+
+    var menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu);
+
+    // Build our new menu
+    var menu = new Menu()
+    menu.append(new MenuItem({
+      label: 'Open developer tool',
+      click: function() {
+        remote.getCurrentWindow().webContents.openDevTools();
+      }
+    }))
+    menu.append(new MenuItem({
+      label: 'More Info...',
+      click: function() {
+        // Trigger an alert when menu item is clicked
+        alert('Here is more information')
+      }
+    }))
+
+    document.addEventListener('contextmenu', function (event) {
+      menu.popup(remote.getCurrentWindow());
+    });
+
     this.loadServerFile();
   }
 
