@@ -537,10 +537,44 @@ angular.module("BoxyApp", ['ui.codemirror'])
     document.getElementById("displayFilterDialog").close();
   }
 
+  this.calculateAggregateReport = function() {
+    var report = {
+      numRequests: 0,
+      totalResponseTime: 0,
+      avgResponseTime: 0,
+      maxResponseTime: 0,
+      minResponseTime: 0
+    };
+
+    if (this.selectedServer === undefined || this.selectedServer.requestList.length === 0) {
+      this.report = report;
+
+      return;
+    }
+
+    report.numRequests = this.selectedServer.requestList.length;
+
+    this.selectedServer.requestList.forEach((req, index) => {
+      if (index === 0) {
+        report.maxResponseTime = report.minResponseTime = req.duration;
+      }
+
+      report.totalResponseTime += req.duration;
+      report.maxResponseTime = req.duration > report.maxResponseTime ? req.duration : report.maxResponseTime;
+      report.minResponseTime = req.duration < report.minResponseTime ? req.duration : report.minResponseTime;
+    });
+
+    report.avgResponseTime = report.totalResponseTime / report.numRequests;
+
+    this.report = report;
+  }
+
   this.openAggregateReportDialog = function() {
     if (this.selectedServer === undefined) {
       return;
     }
+
+    this.calculateAggregateReport();
 
     document.getElementById("aggregateReportDialog").showModal();
   }

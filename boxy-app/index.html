@@ -67,6 +67,16 @@
       overflow-y:auto;
       outline:none;
     }
+    .report_item {
+      line-height: normal;
+    }
+    .report_container {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    .report_container * {
+     -webkit-user-select: text;
+    }
     </style>
   </head>
   <body ng-app="BoxyApp" ng-controller="MainController as main">
@@ -295,20 +305,20 @@
             <h1 class="title">Aggregate Report</h1>
         </header>
 
-        <div style="padding-left: 10px; padding-right: 10px">
+        <div class="report_container">
           <h4 ng-if="(main.selectedServer.displayFilter.urlFilter && main.selectedServer.displayFilter.urlFilter.length > 0) || (main.selectedServer.displayFilter.requestBodyFilter && main.selectedServer.displayFilter.requestBodyFilter.length > 0) || (main.selectedServer.displayFilter.responseBodyFilter && main.selectedServer.displayFilter.responseBodyFilter.length > 0)">Filters</h4>
           <div ng-if="(main.selectedServer.displayFilter.urlFilter && main.selectedServer.displayFilter.urlFilter.length > 0) || (main.selectedServer.displayFilter.requestBodyFilter && main.selectedServer.displayFilter.requestBodyFilter.length > 0) || (main.selectedServer.displayFilter.responseBodyFilter && main.selectedServer.displayFilter.responseBodyFilter.length > 0)" style="margin-left: 5px">
-            <p ng-if="main.selectedServer.displayFilter.urlFilter && main.selectedServer.displayFilter.urlFilter.length > 0">URL path contains: {{main.selectedServer.displayFilter.urlFilter}}</p>
-            <p ng-if="main.selectedServer.displayFilter.requestBodyFilter && main.selectedServer.displayFilter.requestBodyFilter.length > 0">Request body contains: {{main.selectedServer.displayFilter.requestBodyFilter}}</p>
-            <p ng-if="main.selectedServer.displayFilter.responseBodyFilter && main.selectedServer.displayFilter.responseBodyFilter.length > 0">Response body contains: {{main.selectedServer.displayFilter.responseBodyFilter}}</p>
+            <p class="report_item" ng-if="main.selectedServer.displayFilter.urlFilter && main.selectedServer.displayFilter.urlFilter.length > 0"><b>URL path contains:</b> {{main.selectedServer.displayFilter.urlFilter}}</p>
+            <p class="report_item" ng-if="main.selectedServer.displayFilter.requestBodyFilter && main.selectedServer.displayFilter.requestBodyFilter.length > 0"><b>Request body contains:</b> {{main.selectedServer.displayFilter.requestBodyFilter}}</p>
+            <p class="report_item" ng-if="main.selectedServer.displayFilter.responseBodyFilter && main.selectedServer.displayFilter.responseBodyFilter.length > 0"><b>Response body contains:</b> {{main.selectedServer.displayFilter.responseBodyFilter}}</p>
           </div>
           <h4>Report</h4>
           <div style="margin-left: 5px">
-            <p>Number of requests: {{main.report.numRequests}}</p>
-            <p>Cumulative response time (ms): {{main.report.totalResponseTime}}</p>
-            <p>Avg response time (ms): {{main.report.avgResponseTime}}</p>
-            <p>Max response time (ms): {{main.report.maxResponseTime}}</p>
-            <p>Min response time (ms): {{main.report.minResponseTime}}</p>
+            <p class="report_item"><b>Number of requests:</b> {{main.report.numRequests}}</p>
+            <p class="report_item"><b>Cumulative response time (ms):</b> {{main.report.totalResponseTime}}</p>
+            <p class="report_item"><b>Avg response time (ms):</b> {{main.report.avgResponseTime}}</p>
+            <p class="report_item"><b>Max response time (ms):</b> {{main.report.maxResponseTime}}</p>
+            <p class="report_item"><b>Min response time (ms):</b> {{main.report.minResponseTime}}</p>
           </div>
         </div>
 
