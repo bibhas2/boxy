@@ -474,7 +474,7 @@ angular.module("BoxyApp", ['ui.codemirror'])
     this.selectedServer.masterRequestList.length = 0;
     this.selectedServer.requestList.length = 0;
     this.selectedRequest = undefined;
-    this.this.selectedRequestIndex = undefined;
+    this.selectedRequestIndex = undefined;
   }
 
   this.exportAllRequests = function() {
