@@ -24,6 +24,14 @@ To build an app for Mac OS/X:
 
 ```
 npm run pack:osx
+
+```
+
+To build an app for Windows:
+
+```
+npm run pack:win32
+
 ```
 
 The app will be in ``dist/Boxy-darwin-x64/Boxy.app``.
